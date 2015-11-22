@@ -54,7 +54,7 @@ post '/bible' do
     chapter_number = book["chapter_nr"]
     verse_number = book["chapter"].first[0]
     verse_text = book["chapter"][verse_number.to_s]["verse"]
-    verse_text.gsub!(/(god)/i, CAPS_PATTERN).gsub!(/(jesus)/i, CAPS_PATTERN) if HIGHLIGHT_GOD_REFERENCES
+      verse_text.gsub!(/(god|jesus|the lord)/i, CAPS_PATTERN) if HIGHLIGHT_GOD_REFERENCES
       puts "book_name: #{book_name}\nchapter_number: #{chapter_number}\nverse_number: #{verse_number}\nverse_text: #{verse_text}\n\n"
     response_message = ":church: \nBible Verse  #{book_name} #{chapter_number}:#{verse_number}\n#{verse_text}"
   rescue 
