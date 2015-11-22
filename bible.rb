@@ -47,6 +47,7 @@ post '/bible' do
     result = JSON.parse(response[1, response.length-3])  #the response is not pure JSON.  It is textual and requires a bit of massaging
     
     book = result["book"].first
+    if book.nil? || book.empty? then exception("#{book} is null") end
 =begin
   puts book
   puts book["book_name"]  #confirm the book name
@@ -62,7 +63,7 @@ post '/bible' do
     verse_text.gsub!(/(god)/i, CAPS_PATTERN).gsub!(/(jesus)/i, CAPS_PATTERN) if HIGHLIGHT_GOD_REFERENCES
     response_message = ":church: \nBible Verse  #{book_name} #{chapter_number}:#{verse_number}\n#{verse_text}"
   rescue 
-    puts $!.message
+    puts "ERROR: #{$!.message}"
     response_message = "Unable to understand #{message} :frowning:"
   end
   content_type :json
