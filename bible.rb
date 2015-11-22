@@ -47,6 +47,7 @@ post '/bible' do
     result = JSON.parse(response[1, response.length-3])  #the response is not pure JSON.  It is textual and requires a bit of massaging
     
     book = result["book"].first
+    puts "BOOK: #{book}"
     if book.nil? || book.empty? then exception("#{book} is null") end
 =begin
   puts book
