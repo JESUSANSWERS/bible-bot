@@ -11,8 +11,30 @@ class BibleSource
   CAPS_PATTERN = '*\1*'
   NOISY = false
   
-  def initialize(query_string)
+  def initialize
     @ref = {}
+  end
+  
+  def reference(message)
+    case
+      when message.match(/work/i)
+        fetch_single_verse(random_verse_for_category(:work))
+    else
+      fetch_single_verse(message)
+    end
+  end
+  
+  def random_verse_for_category(category)
+    case category
+      when :work 
+      ["Colossians 3:23", "Psalm 90:17", "Proverbs 12:11", "Proverbs 13:4", "Philippians 4:13", "Colossians 3:24", "Proverbs 12:24", "Proverbs 14:23", "Genesis 2:3", "Luke 1:37", "1Timothy 5:8", "Jeremiah 29:11", "Proverbs 6:10", "2Timothy 2:6", "Genesis 2:15", "Titus 2:7", "Proverbs 16:3"].shuffle.first
+    end
+  end
+  
+  def fetch_multiple_verses(verses_range)
+  end
+  
+  def fetch_single_verse(query_string)
     response = HTTParty.get("https://getbible.net/json?passage=#{URI.escape(query_string)}")
     begin
       result = JSON.parse(response[1, response.length-3])  #the response is not pure JSON.  It is textual and requires a bit of massaging

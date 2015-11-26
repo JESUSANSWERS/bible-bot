@@ -26,7 +26,8 @@ post '/bible' do
   #switch on the trigger word
   case trigger_word
   when 'bible', 'gospel', 'scripture'
-    bible = BibleSource.new(message)  #returns an array of returned values or an exception
+    bible = BibleSource.new
+    bible.reference(message)  #returns an array of returned values or an exception
   else # default - ignore
   end
   
