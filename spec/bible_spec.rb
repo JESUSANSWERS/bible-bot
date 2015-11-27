@@ -27,38 +27,7 @@ describe "Bible Bot for Slack" do
     post url, { :text => "bible work", :trigger_word => "bible"}
     response = JSON.parse(last_response.body)
     expect(response["text"]).to satisfy do |t|
-      case 
-        when t.match(/Timothy 5:8/)
-          true
-        when t.match(/Proverbs 13:4/)
-          true
-        when t.match(/Proverbs 14:23/)
-          true
-        when t.match(/Proverbs 12:24/)
-          true
-        when t.match(/Proverbs 16:3/)
-          true
-        when t.match(/Proverbs 12:11/)
-          true
-        when t.match(/Proverbs 6:10/)
-          true
-        when t.match(/Genesis 2:15/)
-          true
-        when t.match(/Philippians 4:13/)
-          true
-        when t.match(/2 Timothy 2:6/)
-          true
-        when t.match(/Titus 2:7/)
-          true
-        when t.match(/Luke 1:37/)
-          true
-        when t.match(/Jeremiah 29:11/)
-          true
-        when t.match(/Colossians 3:2[3|4]/)
-          true
-        when t.match(/Psalms 90:17/)
-          true
-      end
+       t.match(/Timothy 5:8/)|| t.match(/Proverbs 13:4/)|| t.match(/Proverbs 14:23/)|| t.match(/Proverbs 12:24/)|| t.match(/Proverbs 16:3/)|| t.match(/Proverbs 12:11/)|| t.match(/Proverbs 6:10/)|| t.match(/Genesis 2:15/)|| t.match(/Philippians 4:13/)|| t.match(/2 Timothy 2:6/)|| t.match(/Titus 2:7/)|| t.match(/Luke 1:37/)|| t.match(/Jeremiah 29:11/)|| t.match(/Colossians 3:2[3|4]/)|| t.match(/Psalms 90:17/)
     end
   end
 end
