@@ -18,7 +18,7 @@ class BibleSource
   
   def reference(message)
     if result = message.match(KEY_PHRASES)
-      fetch_single_verse(random_verse_for_category(result.to_a[1]))
+      fetch_single_verse(random_verse_for_category(result.to_a[1]).shuffle.first)
     else
       fetch_single_verse(message)
     end
@@ -297,7 +297,7 @@ class BibleSource
       [
         
         ]
-      when "fasle", "untru"
+      when "false", "untru"
       [
         "Genesis 3:4",
         "Leviticus 19:11",
@@ -333,7 +333,7 @@ class BibleSource
         "2Timothy 2:6",
         "Genesis 2:15",
         "Titus 2:7",
-        "Proverbs 16:3"].shuffle.first
+        "Proverbs 16:3"]
     end
   end
   
