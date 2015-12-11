@@ -2,6 +2,7 @@ require 'sinatra'
 require 'json'
 require './bible_source'
 
+TRIGGER_WORDS = ['bible', 'gospel', 'scripture']
 
 post '/bible' do
   #return if params[:token] != ENV['SLACK_TOKEN']
@@ -23,12 +24,9 @@ post '/bible' do
   trigger_word = params[:trigger_word].strip
   message = params[:text].gsub(trigger_word, '').strip
   
-  #switch on the trigger word
-  case trigger_word
-  when 'bible', 'gospel', 'scripture'
+  if TRIGGER_WORDS.include?(trigger_word)
     bible = BibleSource.new
-    bible.reference(message)  #returns an array of returned values or an exception
-  else # default - ignore
+    bible.reference(message)
   end
   
   response_message = "Unable to understand #{message} :frowning:"  #default response

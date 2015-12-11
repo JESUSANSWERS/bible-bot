@@ -1,0 +1,14 @@
+family
+health
+finance
+security
+patience
+love
+romance
+desire
+lust
+time
+effort
+work
+relaxation
+rest
