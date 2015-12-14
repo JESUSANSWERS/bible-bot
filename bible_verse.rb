@@ -7,6 +7,8 @@ require 'httparty'
 require 'nokogiri'
 require 'io/console'
 
+REDIS_HEADER = "uri = URI.parse(ENV[\"REDIS_URL\"])\n uri = URI.parse('redis://h:p7d7tq2p2auh2958o5qcid1seda@ec2-54-83-33-255.compute-1.amazonaws.com:17079')\n @redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)\n "
+
 set :bind, '0.0.0.0'
 set :port, 3000
 
@@ -15,55 +17,73 @@ get "/verses/:topic" do
   output_filename = case params[:format]
   when "rb", "ruby"
     "bible_reference_#{topic}.rb"
+  when "redis"
+    "bible_reference_#{topic}.redis"
   else
     "bible_reference_#{topic}.yml"
   end
   verses = topic_verses(topic, params[:format])
-  open(output_filename, 'a') do |f|
-    f.puts case params[:format]
-      when 'yml', 'yaml'
-        "\n-#{topic}"
-      when 'rb', 'ruby'
-        "when \"#{topic}\"\n\t["
-      else
-        "\n-#{topic}"
+  if params[:format] == 'redis'
+  else
+    open(output_filename, 'a') do |f|
+      f.puts case params[:format]
+        when 'yml', 'yaml'
+          "\n-#{topic}"
+        when 'rb', 'ruby'
+          "when \"#{topic}\"\n\t["
+        else
+          "\n-#{topic}"
+        end
+        f.puts verses
+        f.puts "]\n" if (params[:format] == 'rb' || params[:format] == 'ruby')
       end
-      f.puts verses
-      f.puts "]\n" if (params[:format] == 'rb' || params[:format] == 'ruby')
-    end
+  end #if redis
   @all_verses = verses
   @topic = topic
-  erb :topic_verses
+  @filename = output_filename
+  erb :topic_verse
 end
 
 get "/verses/" do
   r = File.new('topics.txt')
-  @all_topics = r.readlines()
+  all_topics = r.readlines()
   @all_verses = []
-  @all_topics.each do |topic|
-  verses = topic_verses(topic.gsub!(/\n/, ''))
-  output_filename = case params[:format]
+  all_topics.each do |topic|
+  @output_filename = case params[:format]
     when "rb", "ruby"
-    'bible_references.rb'
-  else
-    'bible_references.yml'
-  end
-  verses = topic_verses(topic, params[:format])
-    open(output_filename, 'a') do |f|
-      f.puts case params[:format]
-      when 'yml', 'yaml'
-        "\n-#{topic}"
-        when 'rb', 'ruby'
-        "when \"#{topic}\"\n\t["
-      else
-        "\n-#{topic}"
-      end
-      f.puts verses
-      f.puts "]\n" if (params[:format] == 'rb' || params[:format] == 'ruby')
+      'bible_references.rb'
+    when "redis"
+      'bible_reference.redis'
+    else
+      'bible_references.yml'
     end
-    @all_verses.concat(verses)
-    erb :verses
+    verses = topic_verses(topic.gsub!(/\n/,''), params[:format])
+    if params[:format] == 'redis'
+      #do something completely different
+      #open a different file in another 'do' loop
+      #iterate all the verses and f.puts "@redis.ZADD \"#{topic}\", #{line_num}, #{verse}"
+    else
+      open(@output_filename, 'a') do |f|
+        f.puts case params[:format]
+        when 'yml', 'yaml'
+          "\n-#{topic}"
+          when 'rb', 'ruby'
+          "when \"#{topic}\"\n\t["
+        else
+          "\n-#{topic}"
+        end
+        f.puts verses
+        puts verses
+        f.puts "]\n" if (params[:format] == 'rb' || params[:format] == 'ruby')
+      end
+      tmp_verses = {}
+      tmp_verses = {topic: topic}
+      tmp_verses[:verses] = verses.collect { |v| v}
+      @all_verses << tmp_verses
+      @all_verses
+    end
   end
+      erb :verses
 end
 
 def topic_verses(topic, format='yml')

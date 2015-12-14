@@ -2,6 +2,13 @@
 <p><%= @all_topics %></p>
 <p><ul>
 <% @all_verses.each do |verse| %>
-<li><%= verse %></li>
+<li><%= verse[:topic] %>
+  <ul>
+    <% verse[:verses].each do |ref| %>
+    <li><%= ref %></li>
+    <% end %>
+  </ul>
+</li>
 <% end %>
 </ul></p>
+<p>Written to <%= @output_filename %></p>

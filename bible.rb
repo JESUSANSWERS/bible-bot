@@ -2,6 +2,11 @@ require 'sinatra'
 require 'json'
 require './bible_source'
 
+# For testing on Nitrous
+set :bind, '0.0.0.0'
+set :port, 3000
+# ======================
+
 TRIGGER_WORDS = ['bible', 'gospel', 'scripture']
 
 post '/bible' do

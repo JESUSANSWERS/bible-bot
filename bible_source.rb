@@ -2,6 +2,7 @@
 
 require 'json'
 require 'httparty'
+require 'redis'
 
 class BibleSource
 #http://getbible.net/json?" with a simple query string "p=Jn3:16" forms the base of the API
@@ -9,16 +10,31 @@ class BibleSource
   #perhaps, one day, these can be instance level preferences
   HIGHLIGHT_GOD_REFERENCES = true
   CAPS_PATTERN = '*\1*'
-  KEY_PHRASES = /(light|truth|honest|life|live|love|serv|discipline|wise|wisdom|encourage|fear|fright|praise|worship|fellowship|money|finance|satan|devil|sin|dark|false|untru|work)/i
+  KEY_PHRASES = /(light|truth|honest|life|live|love|serv|discipline|wise|wisdom|encourage|fear|fright|praise|worship|fellowship|money|finance|satan|devil|sin|dark|false|untru|work|testing)/i
   NOISY = false
+  
+  USE_REDIS = true
   
   def initialize
     @ref = {}
+    if USE_REDIS
+    #uri = URI.parse(ENV["REDIS_URL"])
+    uri = URI.parse('redis://h:p7d7tq2p2auh2958o5qcid1seda@ec2-54-83-33-255.compute-1.amazonaws.com:17079')
+        @redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+      @redis.ZREMRANGEBYSCORE 'testing', 1, 1000
+      #test with http://zaphod-136649.nitrousapp.com:3000/bible?trigger_word=bible&text=bible%20testing
+    end
   end
   
   def reference(message)
     if result = message.match(KEY_PHRASES)
-      fetch_single_verse(random_verse_for_category(result.to_a[1]).shuffle.first)
+      if USE_REDIS
+        a_rand = rand(@redis.ZCOUNT result.to_a[1], 1, 1000)
+        reference = @redis.ZRANGE "testing", a_rand, a_rand
+        fetch_single_verse(reference.first)
+      else
+        fetch_single_verse(random_verse_for_category(result.to_a[1]).shuffle.first)
+      end
     else
       fetch_single_verse(message)
     end
