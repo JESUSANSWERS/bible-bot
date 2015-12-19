@@ -24,6 +24,16 @@ get "/verses/:topic" do
   end
   verses = topic_verses(topic, params[:format])
   if params[:format] == 'redis'
+    open(output_filename, 'a') do |f|
+      f.puts "#run with '$ ruby #{output_filename}'\n\nrequire 'redis'\n\n"
+      f.puts REDIS_HEADER
+      f.puts "@redis.ZREMRANGE \"#{topic}\", 1, 100\n"
+      num = 0
+      verses.each do |verse|
+        num += 1
+        f.puts "@redis.ZADD \"#{topic}\", #{num}, \"#{verse.strip}\"\n"
+      end
+    end
   else
     open(output_filename, 'a') do |f|
       f.puts case params[:format]
@@ -59,9 +69,16 @@ get "/verses/" do
     end
     verses = topic_verses(topic.gsub!(/\n/,''), params[:format])
     if params[:format] == 'redis'
-      #do something completely different
-      #open a different file in another 'do' loop
-      #iterate all the verses and f.puts "@redis.ZADD \"#{topic}\", #{line_num}, #{verse}"
+      open(@output_filename, 'a') do |f|
+        f.puts "#run with '$ ruby #{@output_filename}'\n\nrequire 'redis'\n\n"
+        f.puts REDIS_HEADER
+        f.puts "@redis.ZREMRANGE \"#{topic}\", 1, 100\n"
+        num = 1
+        verses.each do |verse|
+          f.puts "@redis.ZADD \"#{topic}\", #{num}, #{verse}"
+          num += 1
+        end
+      end
     else
       open(@output_filename, 'a') do |f|
         f.puts case params[:format]
@@ -76,12 +93,12 @@ get "/verses/" do
         puts verses
         f.puts "]\n" if (params[:format] == 'rb' || params[:format] == 'ruby')
       end
-      tmp_verses = {}
-      tmp_verses = {topic: topic}
-      tmp_verses[:verses] = verses.collect { |v| v}
-      @all_verses << tmp_verses
-      @all_verses
     end
+    tmp_verses = {}
+    tmp_verses = {topic: topic}
+    tmp_verses[:verses] = verses.collect { |v| v}
+    @all_verses << tmp_verses
+    @all_verses
   end
       erb :verses
 end

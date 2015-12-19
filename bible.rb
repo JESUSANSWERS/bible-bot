@@ -2,11 +2,6 @@ require 'sinatra'
 require 'json'
 require './bible_source'
 
-# For testing on Nitrous
-set :bind, '0.0.0.0'
-set :port, 3000
-# ======================
-
 TRIGGER_WORDS = ['bible', 'gospel', 'scripture']
 
 post '/bible' do
@@ -29,8 +24,10 @@ post '/bible' do
   trigger_word = params[:trigger_word].strip
   message = params[:text].gsub(trigger_word, '').strip
   
+  bible = BibleSource.new
   if TRIGGER_WORDS.include?(trigger_word)
-    bible = BibleSource.new
+    bible.fetch_verse(message)
+  else #trigger_word is 'advice'?
     bible.reference(message)
   end
   
