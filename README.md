@@ -19,10 +19,13 @@ Click "Save Settings" and you are ready to go.
 
 ![Chuch Emoji](church_emoji.png?raw=true)
 
-In [Slack](https://slack.com/) you simply type something like `bible John 3:16` and will get a response like this
+In [Slack](https://slack.com/) you simply type something like `bible verse John 3:16` and will get a response like this
 
 ![John 3:16](bible_verse.png?raw=true)
 
+Some supported alternatives are `bible gospel 1 Peter 2:2` and `bible scripture Matthew 5:9`
+
+In addition, you can simply supply a _topic_ and get a random related verse: `bible money`
 ---
 
 Acknowledgement and thanks to [GetBible.net](http://getbible.net/api) for their API that provides the scripture.  I have built this in a modular fashion, though, in order to allow *other* sources if desired.

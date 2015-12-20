@@ -2,7 +2,7 @@ require 'sinatra'
 require 'json'
 require './bible_source'
 
-TRIGGER_WORDS = ['bible', 'gospel', 'scripture']
+KEYWORDS = ['verse', 'gospel', 'scripture']
 
 post '/bible' do
   #return if params[:token] != ENV['SLACK_TOKEN']
@@ -25,9 +25,10 @@ post '/bible' do
   message = params[:text].gsub(trigger_word, '').strip
   
   bible = BibleSource.new
-  if TRIGGER_WORDS.include?(trigger_word)
-    bible.fetch_verse(message)
-  else #trigger_word is 'advice'?
+  #trigger_word should always be 'bible'
+  if (KEYWORDS.collect { |kw| message.split.include?(kw) }).include? true
+    bible.fetch_verse(/\d{1}?\s*[a-zA-Z]*\s*\d{1,2}:\d{1,3}/.match(message)[0])
+  else
     bible.reference(message)
   end
   
