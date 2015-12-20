@@ -6,7 +6,10 @@ GEM
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     json (1.8.3)
+    mini_portile2 (2.0.0)
     multi_xml (0.5.5)
+    nokogiri (1.6.7.1)
+      mini_portile2 (~> 2.0.0.rc2)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
@@ -37,6 +40,7 @@ PLATFORMS
 
 DEPENDENCIES
   httparty
+  nokogiri
   rack-test
   redis
   rspec

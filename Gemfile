@@ -7,3 +7,5 @@ gem 'redis'
 
 gem 'rspec'
 gem 'rack-test'
+
+gem 'nokogiri'
