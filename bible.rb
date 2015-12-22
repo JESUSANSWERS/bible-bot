@@ -3,6 +3,7 @@ require 'json'
 require './bible_source'
 
 KEYWORDS = ['verse', 'gospel', 'scripture']
+FILLER_WORDS = ['in', 'of', 'about', 'when', 'with', 'about', 'for', 'to']
 
 post '/bible' do
   #return if params[:token] != ENV['SLACK_TOKEN']
@@ -29,7 +30,7 @@ post '/bible' do
   if (KEYWORDS.collect { |kw| message.split.include?(kw) }).include? true
     bible.fetch_verse(/\d{1}?\s*[a-zA-Z]*\s*\d{1,2}:\d{1,3}/.match(message)[0])
   else
-    bible.reference(message)
+    bible.reference (message.downcase.split - FILLER_WORDS).join(' ')
   end
   
   response_message = "Unable to understand #{message} :frowning:"  #default response
