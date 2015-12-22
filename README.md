@@ -26,6 +26,7 @@ In [Slack](https://slack.com/) you simply type something like `bible verse John 
 Some supported alternatives are `bible gospel 1 Peter 2:2` and `bible scripture Matthew 5:9`
 
 In addition, you can simply supply a _topic_ and get a random related verse: `bible money`
+
 ---
 
 Acknowledgement and thanks to [GetBible.net](http://getbible.net/api) for their API that provides the scripture.  I have built this in a modular fashion, though, in order to allow *other* sources if desired.
