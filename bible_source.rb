@@ -15,7 +15,7 @@ class BibleSource
 
   def initialize
     @ref = {}
-    #uri = URI.parse(ENV["REDIS_URL"])
+    #uri = URI.parse(ENV["REDISCLOUD_URL"])
     uri = URI.parse('redis://h:p7d7tq2p2auh2958o5qcid1seda@ec2-54-83-33-255.compute-1.amazonaws.com:17079')
     @redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
     #test with http://zaphod-136649.nitrousapp.com:3000/bible?trigger_word=bible&text=bible%20family
@@ -65,7 +65,6 @@ class BibleSource
       num += 1
       @redis.ZADD "#{topic}", "NX", num, reference.strip unless reference.match /\d{1,2}-\d{,2}/
     end
-    puts @redis.ZRANGE "#{topic}", 0, -1
   end
 
 end
