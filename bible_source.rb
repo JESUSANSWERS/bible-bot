@@ -15,7 +15,7 @@ class BibleSource
 
   def initialize
     @ref = {}
-    #uri = URI.parse(ENV["REDIS_URL"])
+    uri = URI.parse(ENV["REDIS_URL"])
     @redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
     #test with http://zaphod-136649.nitrousapp.com:3000/bible?trigger_word=bible&text=bible%20family
   end
