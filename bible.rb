@@ -4,6 +4,7 @@ require './bible_source'
 
 KEYWORDS = ['verse', 'gospel', 'scripture']
 FILLER_WORDS = ['in', 'of', 'about', 'when', 'with', 'about', 'for', 'to']
+output_inject = ''  #subtle changes in the output string based on the query
 
 post '/bible' do
   #return if params[:token] != ENV['SLACK_TOKEN']
