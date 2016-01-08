@@ -4,7 +4,6 @@ require './bible_source'
 
 KEYWORDS = ['verse', 'gospel', 'scripture']
 FILLER_WORDS = ['in', 'of', 'about', 'when', 'with', 'about', 'for', 'to']
-output_inject = ''  #subtle changes in the output string based on the query
 
 post '/bible' do
   #return if params[:token] != ENV['SLACK_TOKEN']
@@ -30,6 +29,7 @@ post '/bible' do
   #trigger_word should always be 'bible'
   if (KEYWORDS.collect { |kw| message.split.include?(kw) }).include? true
     bible.fetch_verse(/\d{1}?\s*[a-zA-Z]*\s*\d{1,2}:\d{1,3}/.match(message)[0])
+    output_inject = ''  #subtle changes in the output string based on the query
   else
     ref = (message.downcase.split - FILLER_WORDS).join(' ')
     output_inject = "about #{ref}:\n"
