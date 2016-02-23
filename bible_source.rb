@@ -15,9 +15,12 @@ class BibleSource
 
   def initialize
     @ref = {}
-    uri = URI.parse(ENV["REDIS_URL"])
+    uri = URI.parse(ENV["REDIS_URL"])  #ENV["REDISCLOUD_URL"]
+    #test
+    #uri = URI.parse('redis://h:p7d7tq2p2auh2958o5qcid1seda@ec2-107-22-209-183.compute-1.amazonaws.com:11379')
+    #rackup -o 0.0.0.0 -p 3000
+    #post http://zaphod-136649.nitrousapp.com:3000/bible  pass trigger_word=bible text=bible%20family
     @redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
-    #test with http://zaphod-136649.nitrousapp.com:3000/bible?trigger_word=bible&text=bible%20family
   end
 
   def reference(message)
@@ -55,7 +58,8 @@ class BibleSource
   end
 
   def capture_list(topic)
-  response = HTTParty.get( "http://www.openbible.info/topics/#{topic}")
+  parsed_topic = topic.gsub(/[^a-zA-Z\d]/, '&')  #anything that is NOT alpha-numeric
+  response = HTTParty.get( "http://www.openbible.info/topics/#{parsed_topic}")
   html_doc = Nokogiri::HTML(response.body)
   verses = html_doc.css('.verse')  #selecting CSS
   num = 0
