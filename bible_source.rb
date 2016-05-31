@@ -34,10 +34,11 @@ class BibleSource
   def fetch_verse(query_string)
     response = HTTParty.get("https://getbible.net/json?passage=#{URI.escape(query_string)}")
     begin
+      if response.upcase == "NULL" then raise ("response to #{query_string} is NULL") and return end
       result = JSON.parse(response[1, response.length-3])  #the response is not pure JSON.  It is textual and requires a bit of massaging
       book = result["book"].first
       puts "BOOK: #{book}" if NOISY
-      if book.nil? || book.empty? then exception("#{book} is null") and return end
+      if book.nil? || book.empty? then raise ("#{book} is null") and return end
 
       @ref[:book_name] = book["book_name"]
       @ref[:chapter_number] = book["chapter_nr"]
